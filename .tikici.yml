@@ -28,17 +28,16 @@ workflows:
         jobs:
             - build_docker
             - publish_docker:
-                requires:
-                    - build_seller_rate_docker
-                filters:
-                    branches:
-                        only:
-                            - development
+                  requires:
+                      - build_docker
+                  filters:
+                      branches:
+                          only:
+                              - development
             - deploy_dev:
-                requires:
-                    - publish_docker
-                filters:
-                    branches:
-                        only:
-                            - development
-
+                  requires:
+                      - publish_docker
+                  filters:
+                      branches:
+                          only:
+                              - development
