@@ -17,8 +17,7 @@ jobs:
 
     publish_docker:
         steps:
-            - push_image:
-                  name: 'query_seller_rate'
+            - push_image
     deploy_dev:
         steps: deploy_dev
 
