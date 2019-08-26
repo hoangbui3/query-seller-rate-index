@@ -12,7 +12,7 @@ jobs:
             - save_cache:
                   key: 'query_seller_rate_cache'
                   paths:
-                      - ~/.m2
+                      - /root/.m2
             - restore_cache:
                   key: 'query_seller_rate_cache'
 
