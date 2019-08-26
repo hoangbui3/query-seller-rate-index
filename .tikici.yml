@@ -6,24 +6,6 @@ config:
     dev_branch_name: development
 
 jobs:
-    build:
-        docker:
-            - image:
-                  name: 'query_seller_rate'
-
-        steps:
-            - restore_cache:
-                  key: maven-3.6-jdk-11
-            #            - sonar:
-            #                name: Run Sonarqube Scanner
-            #                maven: mvn test sonar:sonar
-            - run:
-                  name: Install package to repository
-                  command: mvn clean package -DskipTests
-            - save_cache:
-                  key: maven-3.6-jdk-11
-                  paths:
-                      - /root/.m2
 
     build_docker:
         steps:
@@ -44,10 +26,7 @@ jobs:
 workflows:
     jenkins_pipeline:
         jobs:
-            - build
-            - build_docker:
-                requires:
-                    - build
+            - build_docker
             - publish_docker:
                 requires:
                     - build_seller_rate_docker
