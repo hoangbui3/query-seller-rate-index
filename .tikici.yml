@@ -7,9 +7,6 @@ config:
 
 jobs:
     build_seller_rate_docker:
-        docker:
-            - image:
-                name : 'seller-bulk-index'
         steps:
             - build_image
 
