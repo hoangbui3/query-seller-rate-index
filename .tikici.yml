@@ -12,11 +12,10 @@ jobs:
             - save_cache:
                   key: 'query_seller_rate_cache'
                   paths:
-                      - /root/.m2
-                      - /root/.sonar/cache
+                      - ~/.m2
             - restore_cache:
                   key: 'query_seller_rate_cache'
-                  
+
     publish_docker:
         steps:
             - push_image:
