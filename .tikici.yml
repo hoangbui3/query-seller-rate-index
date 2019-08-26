@@ -6,38 +6,35 @@ config:
     dev_branch_name: development
 
 jobs:
-    build_docker:
+    build_seller_rate_docker:
+        docker:
+            - image;
+                name : 'seller-bulk-index'
         steps:
             - build_image
 
     publish_docker:
         steps:
-            - push_image
+            - push_image:
+                  name: 'seller-bulk-index'
 
 
-    sonar_scan:
-        steps:
-            - sonar:
-                name: Run Sonarqube Scanner
-                common: ''
     deploy_dev:
-        steps: deploy_dev
+        steps:
+            - deploy_dev
+
 
 workflows:
     jenkins_pipeline:
         jobs:
-            - build_docker
+            - build_seller_rate_docker
             - publish_docker:
                 requires:
-                    - build_docker
+                    - build_seller_rate_docker
                 filters:
                     branches:
                         only:
-                            - master
                             - development
-                            - staging
-
-            - sonar_scan
             - deploy_dev:
                 requires:
                     - publish_docker
