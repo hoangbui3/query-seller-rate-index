@@ -8,13 +8,11 @@ config:
 jobs:
     build_seller_rate_docker:
         steps:
-            - build_image
-            - save_cache:
-                  key: 'query_seller_rate_cache'
-                  paths:
-                      - /root/.m2
-            - restore_cache:
-                  key: 'query_seller_rate_cache'
+            - build_image:
+                  image: 'seller-bulk-index'
+                  dockerfile: './Dockerfile'
+                  build_location: '.'
+
 
     publish_docker:
         steps:
