@@ -14,7 +14,10 @@ import org.elasticsearch.client.GetAliasesResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+//import org.elasticsearch.client.indices.CreateIndexRequest;
+//import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -29,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BulkUpload {
+//for ES version 7.3.0+++
+public class BulkUploadVersion7 {
     //Adding variables for ElasticSearch connection i.e "http://localhost:9200"
 
     public static String INDEX_NAME;
@@ -45,7 +49,7 @@ public class BulkUpload {
 
 
     public static void main(String[] args) throws Exception {
-        BulkUpload bulkupload = new BulkUpload();
+        BulkUploadVersion7 bulkupload = new BulkUploadVersion7();
         String job;
         Date date;
 
@@ -89,7 +93,7 @@ public class BulkUpload {
             String indexName = INDEX_NAME + "_" + CommonUtils.getStringByDate(new Date()) + "_" + (new Random().nextInt(1000));
             boolean isCreated = createIndex(indexName);
             if (isCreated) {
-                System.out.println("Create Index " + indexName + " Success!");
+                System.out.println("Create Index" + indexName + " Success!");
                 ESBulkInsert(indexName, valueList);
                 removeOldIndex(list);
             }
@@ -152,30 +156,23 @@ public class BulkUpload {
 
     private synchronized boolean createIndex(String indexName) throws IOException {
         CreateIndexRequest request = new CreateIndexRequest(indexName);
-
-        request.source(
+        request.settings(Settings.builder()
+                .put("index.number_of_shards", 3)
+                .put("index.number_of_replicas", 2)
+        );
+        request.mapping(
                 "{\n" +
-
-                        "    \"settings\" : {\n" +
-                        "        \"number_of_shards\" : 2,\n" +
-                        "        \"number_of_replicas\" : 2\n" +
-                        "    },\n" +
-
-                        "   \"mappings\": {\n" +
-                        "       \"seller\": {\n" +
-                        "           \"properties\": {\n" +
-                        "               \"seller_id\": {\"type\": \"long\"},\n" +
-                        "               \"seller_name\": {\"type\": \"text\"},\n" +
-                        "               \"queries\":{\n" +
-                        "                   \"type\": \"nested\",\n" +
-                        "                   \"properties\": {\n" +
-                        "                       \"query\": {\"type\": \"text\"},\n" +
-                        "                       \"rate\": {\"type\": \"float\"}\n" +
-                        "                   }\n" +
-                        "               }\n"+
-                        "           }\n" +
-                        "       }\n" +
-                        "   }\n" +
+                        "    \"properties\": {\n" +
+                        "      \"seller_id\": {\"type\": \"long\"},\n" +
+                        "      \"seller_name\": {\"type\": \"text\"},\n" +
+                        "      \"queries\":{\n" +
+                        "        \"type\": \"nested\",\n" +
+                        "        \"properties\": {\n" +
+                        "          \"query\": {\"type\": \"text\"},\n" +
+                        "          \"rate\": {\"type\": \"float\"}\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "  }\n" +
                         "}\n",
                 XContentType.JSON);
         request.alias(new Alias(INDEX_NAME));
@@ -237,7 +234,7 @@ public class BulkUpload {
                         jb.endObject();
 
                         String id = UUID.randomUUID().toString();
-                        bulkRequest1.add(new IndexRequest(indexName, "seller", id)
+                        bulkRequest1.add(new IndexRequest(indexName).id(id)
                                 .source(jb));
                         System.out.println(i + "." + counter + "." + sellerName);
 
@@ -263,7 +260,7 @@ public class BulkUpload {
                     jb.endObject();
 
                     String id = UUID.randomUUID().toString();
-                    bulkRequest1.add(new IndexRequest(indexName, "seller", id)
+                    bulkRequest1.add(new IndexRequest(indexName).id(id)
                             .source(jb));
                 }
 

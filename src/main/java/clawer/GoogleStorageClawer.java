@@ -60,12 +60,11 @@ public class GoogleStorageClawer {
 
         BlobId blobId = BlobId.of(GoogleStorageClawer.BUCKET, fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
-        System.out.println("Start uploading "+fileName+" to Google Storage");
+        System.out.println("Start uploading " + fileName + " to Google Storage");
         Blob blob = storage.create(blobInfo, fileContent);
-        System.out.println("Upload "+fileName+" to Google Storage done");
+        System.out.println("Upload " + fileName + " to Google Storage done");
 
     }
-
 
 
     public static final String[] COLS = new String[]{"query", "seller_name", "seller_id", "rate"};
@@ -83,15 +82,17 @@ public class GoogleStorageClawer {
             //clean temp folder
             File dir = new File(directory);
 
-            for (File oldFile: dir.listFiles())
-                if (!file.isDirectory())
-                    file.delete();
+            for (File oldFile : dir.listFiles()) {
+                if (!oldFile.isDirectory()) {
+                    System.out.println("Deleting old file: "+ oldFile.getName());
+                    oldFile.delete();
+                }
+            }
             //create new file for today
             file.createNewFile();
-        }else{
+        } else {
             return;
         }
-
 
 
         FileWriter csvWriter = new FileWriter(file.getAbsoluteFile());
@@ -126,5 +127,16 @@ public class GoogleStorageClawer {
         return fileName;
     }
 
+
+    public static void main(String[] args) {
+        String directory = "./temp";
+        System.out.println("Start writing result to CVS temp file");
+
+        File dir = new File(directory);
+
+        for (File oldFile : dir.listFiles())
+            if (!oldFile.isDirectory())
+                oldFile.delete();
+    }
 
 }
