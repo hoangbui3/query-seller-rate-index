@@ -9,7 +9,14 @@ jobs:
     build_seller_rate_docker:
         steps:
             - build_image
-
+            - save_cache:
+                  key: 'query_seller_rate_cache'
+                  paths:
+                      - /root/.m2
+                      - /root/.sonar/cache
+            - restore_cache:
+                  key: 'query_seller_rate_cache'
+                  
     publish_docker:
         steps:
             - push_image:
