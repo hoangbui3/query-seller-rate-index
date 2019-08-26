@@ -1,6 +1,7 @@
 //Adding imports
 
 import clawer.GoogleStorageClawer;
+import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.alias.Alias;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -33,7 +34,7 @@ public class BulkUpload {
     //Adding variables for ElasticSearch connection i.e "http://localhost:9200"
 
     public static String INDEX_NAME;
-    public static String HOST;
+    public static String[] HOST;
     public static int PORT;
     public static String SCHEME;
     public static String JOB1 = "upload-gs";
@@ -109,10 +110,16 @@ public class BulkUpload {
         System.out.println("Making ES Connection");
 
         if (restHighLevelClient == null) {
+
+            HttpHost[] hosts = new HttpHost[HOST.length];
+            int count = 0 ;
+            for(String host: HOST){
+                hosts[count] = new HttpHost(HOST[count].trim(), PORT, SCHEME);
+                count++;
+            }
+
             restHighLevelClient = new RestHighLevelClient(
-                    RestClient.builder(
-                            new org.apache.http.HttpHost(HOST, PORT, SCHEME)
-                    ));
+                    RestClient.builder(hosts));
         }
         return restHighLevelClient;
     }
@@ -187,7 +194,7 @@ public class BulkUpload {
 
     public void loadProperties() {
         Properties prop = PropertiesReader.getProp();
-        HOST = prop.getProperty("HOST");
+        HOST = prop.getProperty("HOST").split(",");
         PORT = Integer.valueOf(prop.getProperty("PORT"));
         SCHEME = prop.getProperty("SCHEME");
         INDEX_NAME = prop.getProperty("INDEX_NAME");
