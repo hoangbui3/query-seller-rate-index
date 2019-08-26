@@ -1,0 +1,48 @@
+version: 1
+
+config:
+    slack_notify: true
+    slack_channel: 'query_seller_rate'
+    dev_branch_name: development
+
+jobs:
+    build_docker:
+        steps:
+            - build_image
+
+    publish_docker:
+        steps:
+            - push_image
+
+
+    sonar_scan:
+        steps:
+            - sonar:
+                name: Run Sonarqube Scanner
+                common: ''
+    deploy_dev:
+        steps: deploy_dev
+
+workflows:
+    jenkins_pipeline:
+        jobs:
+            - build_docker
+            - publish_docker:
+                requires:
+                    - build_docker
+                filters:
+                    branches:
+                        only:
+                            - master
+                            - development
+                            - staging
+
+            - sonar_scan
+            - deploy_dev:
+                requires:
+                    - publish_docker
+                filters:
+                    branches:
+                        only:
+                            - development
+
