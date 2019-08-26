@@ -15,8 +15,7 @@ jobs:
             - push_image:
                   name: 'seller-bulk-index'
     deploy_dev:
-        steps:
-            - deploy_dev
+        steps: deploy_dev
 
 
 workflows:
