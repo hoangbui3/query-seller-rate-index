@@ -9,11 +9,7 @@ jobs:
 
     build_docker:
         steps:
-            - build_image:
-                  image: 'query_seller_rate'
-                  dockerfile: './Dockerfile'
-                  build_location: './'
-
+            - build_image
 
     publish_docker:
         steps:
