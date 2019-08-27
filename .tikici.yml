@@ -10,7 +10,6 @@ jobs:
     build_docker:
         steps:
             - build_image
-
     publish_docker:
         steps:
             - push_image
