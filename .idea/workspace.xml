@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="61c95e2f-da13-44f6-a6f8-9eebd52d9f65" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/temp/how to run.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/temp/query_seller_rate_20190827.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DockerfileOld" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.tikici.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.tikici.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/how to run.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
