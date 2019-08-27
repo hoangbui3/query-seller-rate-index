@@ -140,7 +140,6 @@ public class BulkUploadVersion7 {
         }
         return aliasIndex;
 
-
     }
 
     private static synchronized void removeOldIndex(List<String> listRemove) throws IOException {
