@@ -5,8 +5,6 @@ ENV APP_HOME /src
 
 WORKDIR $APP_HOME
 
-
-
 RUN wget https://bootstrap.pypa.io/get-pip.py && \
 	python get-pip.py && \
 	rm -rf get-pip.py
@@ -18,10 +16,8 @@ RUN pip install --upgrade --no-cache-dir pip \
 COPY ./docker/supervisord/supervisord.conf /etc/supervisord.conf
 ADD ./docker/supervisord/supervisor.d/ /etc/supervisor.d/
 
-COPY pom.xml .
-RUN mvn dependency:go-offline
-
 ADD . $APP_HOME
+
 RUN mvn install
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf", "-n"]
