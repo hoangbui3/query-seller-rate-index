@@ -1,4 +1,4 @@
-package vn.tiki.discovery.crawler;
+package vn.tiki.discovery;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.RetryOption;
@@ -11,11 +11,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-public class BigQueryCrawler {
+public class BigQueryClient {
     private final BigQuery bqConnection;
 	private final String bqQueryTemplate;
 
-    public BigQueryCrawler() throws IOException {
+    public BigQueryClient() throws IOException {
         InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("tiki-search-platform.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(fileInputStream);
         this.bqConnection = BigQueryOptions.newBuilder()
