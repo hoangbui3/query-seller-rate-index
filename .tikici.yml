@@ -37,3 +37,10 @@ workflows:
                     branches:
                         only:
                             - development
+            - deploy_production:
+                requires:
+                    - publish_docker
+                filters:
+                    branches:
+                        only:
+                            - master
