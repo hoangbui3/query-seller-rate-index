@@ -6,6 +6,7 @@ config:
     dev_branch_name: development
 
 jobs:
+
     build_docker:
         steps:
             - build_image
@@ -16,6 +17,7 @@ jobs:
         steps: deploy_dev
     deploy_production:
         steps: deploy_production
+
 
 workflows:
     jenkins_pipeline:
@@ -29,6 +31,7 @@ workflows:
                         only:
                             - master
                             - development
+
             - deploy_dev:
                 requires:
                     - publish_docker
@@ -38,6 +41,8 @@ workflows:
                             - development
             - deploy_production:
                 requires:
+                    - publish_docker
+                filters:
                     branches:
                         only:
                             - master
