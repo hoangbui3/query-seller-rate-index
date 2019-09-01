@@ -1,4 +1,4 @@
-package vn.tiki.discovery.crawler;
+package vn.tiki.discovery;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.ReadChannel;
@@ -15,12 +15,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoogleStorageCrawler {
+public class GoogleStorageClient {
     public static final String BUCKET_NAME = "tiki_search_platform";
     public static final String BASE_FILE_NAME = "query_seller_rate";
     private final Storage storage;
 
-    public GoogleStorageCrawler() throws IOException {
+    public GoogleStorageClient() throws IOException {
         InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("tiki-search-platform.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(fileInputStream);
         this.storage = StorageOptions.newBuilder()
