@@ -1,11 +1,11 @@
-package clawer;
+package vn.tiki.discovery.crawler;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.bigquery.*;
 import com.google.cloud.storage.*;
 import com.opencsv.CSVWriter;
-import utils.CommonUtils;
+import vn.tiki.discovery.utils.CommonUtils;
 
 import java.io.*;
 import java.nio.channels.Channels;
@@ -13,16 +13,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 
-public class GoogleStorageClawer {
+public class GoogleStorageCrawler {
     private String fileName;
     private String postfix;
 
     private Storage storage;
-    public static String BUCKET = "tiki_search_platform";
+    public static final String BUCKET = "tiki_search_platform";
     public static final String BASE_FILE_NAME = "query_seller_rate";
 
-    public GoogleStorageClawer(Date date) throws IOException {
-
+    public GoogleStorageCrawler(Date date) throws IOException {
         InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("tiki-search-platform.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(fileInputStream);
         storage = StorageOptions.newBuilder()
@@ -31,7 +30,6 @@ public class GoogleStorageClawer {
                 .build()
                 .getService();
 
-        String myCredentials = "/path/to/my/key.json";
         this.postfix = CommonUtils.getStringByDate(date);
         fileName = BASE_FILE_NAME + "_" + postfix + ".csv";
     }
@@ -58,7 +56,7 @@ public class GoogleStorageClawer {
 
         byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
 
-        BlobId blobId = BlobId.of(GoogleStorageClawer.BUCKET, fileName);
+        BlobId blobId = BlobId.of(GoogleStorageCrawler.BUCKET, fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
         System.out.println("Start uploading " + fileName + " to Google Storage");
         Blob blob = storage.create(blobInfo, fileContent);

@@ -1,5 +1,4 @@
-import clawer.BigQueryClawer;
-import clawer.GoogleStorageClawer;
+package vn.tiki.discovery;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,30 +8,32 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import vn.tiki.discovery.crawler.BigQueryCrawler;
+import vn.tiki.discovery.crawler.GoogleStorageCrawler;
+
 public class DataTransfer {
-    private BigQueryClawer bigQueryClawer;
-    private GoogleStorageClawer googleStorageClawer;
+    private BigQueryCrawler bigQueryCrawler;
+    private GoogleStorageCrawler googleStorageCrawler;
 
     public DataTransfer(Date date) throws IOException {
-        bigQueryClawer = new BigQueryClawer(date);
-        googleStorageClawer = new GoogleStorageClawer(date);
+        bigQueryCrawler = new BigQueryCrawler(date);
+        googleStorageCrawler = new GoogleStorageCrawler(date);
     }
 
     public void transferQueryToGS() throws IOException, InterruptedException {
     }
 
-
     public void transferDataFromBQtoGS() throws IOException, InterruptedException {
         String directory = "./temp";
-        File file = new File(directory, googleStorageClawer.getFileName());
+        File file = new File(directory, googleStorageCrawler.getFileName());
 
         if (!file.exists()) {
             System.out.println("File  not exits, query GoogleBigQuery then Save to temp file");
-            googleStorageClawer.saveResultToTempFile(bigQueryClawer.getBigQueryDataResult());
+            googleStorageCrawler.saveResultToTempFile(bigQueryCrawler.getBigQueryDataResult());
         } else {
             System.out.println("File exits, upload it to Google Storage");
         }
-        googleStorageClawer.uploadDataToGS(file.getAbsolutePath());
+        googleStorageCrawler.uploadDataToGS(file.getAbsolutePath());
     }
 
     public List<String> getDataFromGS() throws IOException {
@@ -40,8 +41,8 @@ public class DataTransfer {
         try {
             int retry = 0;
             while (CSVFile == null) {
-                CSVFile = googleStorageClawer.getDataFromGS(
-                        googleStorageClawer.BUCKET, googleStorageClawer.getFileName());
+                CSVFile = googleStorageCrawler.getDataFromGS(
+                        googleStorageCrawler.BUCKET, googleStorageCrawler.getFileName());
                 if (CSVFile == null) {
                     transferDataFromBQtoGS();
                     retry++;

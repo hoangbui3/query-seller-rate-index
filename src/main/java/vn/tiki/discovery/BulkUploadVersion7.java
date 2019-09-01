@@ -1,7 +1,5 @@
-//Adding imports
+package vn.tiki.discovery;
 
-import clawer.GoogleStorageClawer;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.alias.Alias;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -15,13 +13,15 @@ import org.elasticsearch.client.GetAliasesResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+//import org.elasticsearch.client.indices.CreateIndexRequest;
+//import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import utils.CommonUtils;
-import utils.PropertiesReader;
-
+import vn.tiki.discovery.utils.CommonUtils;
+import vn.tiki.discovery.crawler.GoogleStorageCrawler;
 
 import java.util.*;
 import java.io.*;
@@ -30,13 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BulkUpload {
-    //Adding variables for ElasticSearch connection i.e "http://localhost:9200"
-
-    public static String INDEX_NAME;
-    public static String[] HOST;
-    public static int PORT;
-    public static String SCHEME;
+//for ES version 7.3.0+++
+public class BulkUploadVersion7 {
+    public final static String INDEX_NAME = System.getenv("QUERY_SELLER_RATE_ALIAS");
+    public final static String HOST_STR = System.getenv("ELASTIC_SEARCH_HOST");
+    public final static int PORT = Integer.parseInt(System.getenv("ELASTIC_SEARCH_PORT"));
     public static String JOB1 = "upload-gs";
     public static String JOB2 = "insert-es";
 
@@ -46,7 +44,7 @@ public class BulkUpload {
 
 
     public static void main(String[] args) throws Exception {
-        BulkUpload bulkupload = new BulkUpload();
+        BulkUploadVersion7 bulkupload = new BulkUploadVersion7();
         String job;
         Date date;
 
@@ -62,10 +60,7 @@ public class BulkUpload {
             }
         }
 
-        //BulkUpload class object
-        bulkupload.loadProperties();
         bulkupload.dataTransfer = new DataTransfer(date);
-        // makeConnection function to test whether we are connected with ElasticSearch Server or Not
 
         if (job.equals(JOB1)) {
             bulkupload.dataTransfer.transferDataFromBQtoGS();
@@ -90,7 +85,7 @@ public class BulkUpload {
             String indexName = INDEX_NAME + "_" + CommonUtils.getStringByDate(new Date()) + "_" + (new Random().nextInt(1000));
             boolean isCreated = createIndex(indexName);
             if (isCreated) {
-                System.out.println("Create Index " + indexName + " Success!");
+                System.out.println("Create Index" + indexName + " Success!");
                 ESBulkInsert(indexName, valueList);
                 removeOldIndex(list);
             }
@@ -110,16 +105,11 @@ public class BulkUpload {
         System.out.println("Making ES Connection");
 
         if (restHighLevelClient == null) {
-
-            HttpHost[] hosts = new HttpHost[HOST.length];
-            int count = 0 ;
-            for(String host: HOST){
-                hosts[count] = new HttpHost(HOST[count].trim(), PORT, SCHEME);
-                count++;
-            }
-
+            String[] HOST = HOST_STR.split(",");
             restHighLevelClient = new RestHighLevelClient(
-                    RestClient.builder(hosts));
+                    RestClient.builder(
+                            new org.apache.http.HttpHost(HOST[0].trim(), PORT)
+                    ));
         }
         return restHighLevelClient;
     }
@@ -143,7 +133,6 @@ public class BulkUpload {
         }
         return aliasIndex;
 
-
     }
 
     private static synchronized void removeOldIndex(List<String> listRemove) throws IOException {
@@ -159,45 +148,29 @@ public class BulkUpload {
 
     private synchronized boolean createIndex(String indexName) throws IOException {
         CreateIndexRequest request = new CreateIndexRequest(indexName);
-
-        request.source(
+        request.settings(Settings.builder()
+                .put("index.number_of_shards", 3)
+                .put("index.number_of_replicas", 2)
+        );
+        request.mapping(
                 "{\n" +
-
-                        "    \"settings\" : {\n" +
-                        "        \"number_of_shards\" : 2,\n" +
-                        "        \"number_of_replicas\" : 2\n" +
-                        "    },\n" +
-
-                        "   \"mappings\": {\n" +
-                        "       \"seller\": {\n" +
-                        "           \"properties\": {\n" +
-                        "               \"seller_id\": {\"type\": \"long\"},\n" +
-                        "               \"seller_name\": {\"type\": \"text\"},\n" +
-                        "               \"queries\":{\n" +
-                        "                   \"type\": \"nested\",\n" +
-                        "                   \"properties\": {\n" +
-                        "                       \"query\": {\"type\": \"text\"},\n" +
-                        "                       \"rate\": {\"type\": \"float\"}\n" +
-                        "                   }\n" +
-                        "               }\n"+
-                        "           }\n" +
-                        "       }\n" +
-                        "   }\n" +
+                        "    \"properties\": {\n" +
+                        "      \"seller_id\": {\"type\": \"long\"},\n" +
+                        "      \"seller_name\": {\"type\": \"text\"},\n" +
+                        "      \"queries\":{\n" +
+                        "        \"type\": \"nested\",\n" +
+                        "        \"properties\": {\n" +
+                        "          \"query\": {\"type\": \"text\"},\n" +
+                        "          \"rate\": {\"type\": \"float\"}\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "  }\n" +
                         "}\n",
                 XContentType.JSON);
         request.alias(new Alias(INDEX_NAME));
 
         CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
         return createIndexResponse.isAcknowledged();
-    }
-
-
-    public void loadProperties() {
-        Properties prop = PropertiesReader.getProp();
-        HOST = prop.getProperty("HOST").split(",");
-        PORT = Integer.valueOf(prop.getProperty("PORT"));
-        SCHEME = prop.getProperty("SCHEME");
-        INDEX_NAME = prop.getProperty("INDEX_NAME");
     }
 
     public synchronized void ESBulkInsert(String indexName, List<String> valueList) throws Exception {
@@ -211,7 +184,7 @@ public class BulkUpload {
         StringTokenizer st; // StringTokenizer object to break our dataRows from tsv to tokens
 
         // Columns count
-        int colCount = GoogleStorageClawer.COLS.length;
+        int colCount = GoogleStorageCrawler.COLS.length;
         System.out.println("colCount: " + colCount);
         System.out.println("size: " + valueList.size());
 
@@ -244,7 +217,7 @@ public class BulkUpload {
                         jb.endObject();
 
                         String id = UUID.randomUUID().toString();
-                        bulkRequest1.add(new IndexRequest(indexName, "seller", id)
+                        bulkRequest1.add(new IndexRequest(indexName).id(id)
                                 .source(jb));
                         System.out.println(i + "." + counter + "." + sellerName);
 
@@ -270,7 +243,7 @@ public class BulkUpload {
                     jb.endObject();
 
                     String id = UUID.randomUUID().toString();
-                    bulkRequest1.add(new IndexRequest(indexName, "seller", id)
+                    bulkRequest1.add(new IndexRequest(indexName).id(id)
                             .source(jb));
                 }
 
