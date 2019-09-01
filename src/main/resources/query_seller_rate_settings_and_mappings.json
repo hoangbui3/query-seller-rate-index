@@ -1,0 +1,29 @@
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 2
+  },
+  "mappings": {
+    "seller": {
+      "properties": {
+        "seller_id": {
+          "type": "long"
+        },
+        "seller_name": {
+          "type": "text"
+        },
+        "queries": {
+          "type": "nested",
+          "properties": {
+            "query": {
+              "type": "text"
+            },
+            "rate": {
+              "type": "float"
+            }
+          }
+        }
+      }
+    }
+  }
+}
