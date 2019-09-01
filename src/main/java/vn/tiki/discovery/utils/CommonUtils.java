@@ -1,24 +1,20 @@
 package vn.tiki.discovery.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 public class CommonUtils
 {
-    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-
-    public static String getStringByDate(Date date){
-        return sdf.format(date);
-    }
-
-    public static Date getDateByString(String string){
-        try {
-            return sdf.parse(string);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new Date();
-        }
-    }
-
+	public static String readAll(InputStream is) throws IOException {
+		StringBuilder result = new StringBuilder();
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				result.append(line).append("\n");
+			}
+		}
+		return result.toString();
+	}
 }
