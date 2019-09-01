@@ -1,4 +1,4 @@
-package utils;
+package vn.tiki.discovery.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

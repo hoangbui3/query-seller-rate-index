@@ -1,18 +1,17 @@
-package clawer;
+package vn.tiki.discovery.crawler;
 
-import clawer.GoogleStorageClawer;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.RetryOption;
 import com.google.cloud.bigquery.*;
 import org.threeten.bp.Duration;
-import utils.CommonUtils;
+import vn.tiki.discovery.utils.CommonUtils;
 
 import java.io.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-public class BigQueryClawer {
+public class BigQueryCrawler {
     private BigQuery bigquery;
 
     public String bigQuery = "WITH\n" +
@@ -91,7 +90,7 @@ public class BigQueryClawer {
             "ORDER BY\n" +
             "  seller_id";
 
-    public BigQueryClawer(Date date) throws IOException {
+    public BigQueryCrawler(Date date) throws IOException {
 
         InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("tiki-search-platform.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(fileInputStream);
