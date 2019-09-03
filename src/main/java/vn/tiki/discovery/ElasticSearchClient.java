@@ -18,11 +18,10 @@ import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-
-import java.io.*;
-import java.util.*;
-
 import vn.tiki.discovery.utils.CommonUtils;
+
+import java.io.IOException;
+import java.util.*;
 
 // TODO turn it into a proper singleton
 // TODO change alias AFTER index is created, not BEFORE

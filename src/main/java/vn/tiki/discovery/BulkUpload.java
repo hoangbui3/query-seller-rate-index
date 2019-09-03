@@ -1,10 +1,7 @@
 package vn.tiki.discovery;
 
-import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import vn.tiki.discovery.utils.CommonUtils;
+import java.util.Date;
 
 public class BulkUpload {
     public static final String JOB_UPLOAD_GS = "upload-gs";
