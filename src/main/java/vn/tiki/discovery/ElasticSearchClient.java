@@ -58,8 +58,13 @@ public class ElasticSearchClient {
             boolean isCreated = createIndex(indexName);
             if (isCreated) {
                 System.out.println("Create Index " + indexName + " Success!");
-                ESBulkInsert(indexName, rowsList);
-                createAlias(indexName);
+                 boolean isInsertSuccess = ESBulkInsert(indexName, rowsList);
+                 if(isInsertSuccess) {
+                     createAlias(indexName);
+                 }else{
+                     list.clear();
+                     list.add(indexName);
+                 }
                 removeOldIndex(list);
             }
             // endtime
@@ -82,6 +87,7 @@ public class ElasticSearchClient {
         HttpHost[] httpHosts = new HttpHost[hosts.length];
         int count = 0;
         for (String host : hosts) {
+            System.out.println("HOST: " + hosts[count].trim() + ":" + port);
             httpHosts[count] = new HttpHost(hosts[count].trim(), port);
             count++;
         }
@@ -146,7 +152,7 @@ public class ElasticSearchClient {
     }
 
 
-    public static synchronized void ESBulkInsert(String indexName, List<String[]> rowsList) throws Exception {
+    public static synchronized boolean ESBulkInsert(String indexName, List<String[]> rowsList) throws Exception {
         // Creating a new BulkRequest object with the name bulkRequest1
         BulkRequest bulkRequest1 = new BulkRequest();
 
@@ -248,14 +254,14 @@ public class ElasticSearchClient {
                 } catch (Exception ex) {
                     System.out.println("error on row: " + i);
                     ex.printStackTrace();
-                    return;
+                    return false;
                 }
                 j++;
             }
             i++;
         }
 
-
+        return true;
     }
 }
 
