@@ -40,15 +40,11 @@ public class BulkUpload {
 
         if (job.equals(JOB_UPLOAD_GS)) {
 
-//			googleStorageClient.uploadDataToGS(
-//					bigQueryClient.getBigQueryDataResult(dateSuffix),
-//					"query_seller_rates/" + dateSuffix + ".tsv"
-//			);
+			googleStorageClient.uploadDataToGS(
+					bigQueryClient.getBigQueryDataResult(dateSuffix),
+					"query_seller_rates/" + dateSuffix + ".tsv"
+			);
 
-            elasticSearchClient.insertDataToES(
-                    googleStorageClient.getDataFromGS(parseDate(dateSuffix)),
-                    dateSuffix
-            );
         }
 
         if (job.equals(JOB_INSERT_ES)) {
