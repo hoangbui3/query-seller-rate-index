@@ -51,7 +51,7 @@ final AS (
     FROM count_total, count_store_per_keyword
     WHERE
         count_total.keyword = count_store_per_keyword.keyword AND
-        total > 100 AND
+        total > 50 AND
         seller_name != "Tiki Trading"
     ORDER BY rate DESC, total DESC
 )
@@ -60,7 +60,10 @@ SELECT
     TRIM(REGEXP_REPLACE(keyword, r"[\t\n\r]", " ")) as query,
     TRIM(REGEXP_REPLACE(seller_name, r"[\t\n\r]", " ")) as seller_name,
     seller_id,
+    total,
+    count_store,
     rate
 FROM final
+WHERE rate > 0.8
 ORDER BY seller_id
 
