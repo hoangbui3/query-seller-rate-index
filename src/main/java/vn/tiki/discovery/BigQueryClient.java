@@ -1,14 +1,11 @@
 package vn.tiki.discovery;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.RetryOption;
 import com.google.cloud.bigquery.*;
-import org.threeten.bp.Duration;
 import vn.tiki.discovery.utils.CommonUtils;
 
-import java.io.*;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 public class BigQueryClient {
