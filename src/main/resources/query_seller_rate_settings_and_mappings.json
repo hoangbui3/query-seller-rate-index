@@ -16,7 +16,7 @@
           "type": "nested",
           "properties": {
             "query": {
-              "type": "text"
+              "type": "keyword"
             },
             "rate": {
               "type": "float"
