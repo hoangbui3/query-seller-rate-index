@@ -6,6 +6,7 @@ import com.google.cloud.bigquery.*;
 import com.google.cloud.storage.*;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
@@ -22,7 +23,8 @@ public class GoogleStorageClient {
     private String dateSuffix;
 
     public GoogleStorageClient() throws IOException {
-        InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("tiki-search-platform.json");
+        InputStream fileInputStream = new FileInputStream("./gcp/bigquery/tiki-search-platform.json");
+
         GoogleCredentials credentials = GoogleCredentials.fromStream(fileInputStream);
         this.storage = StorageOptions.newBuilder()
                 .setCredentials(credentials)

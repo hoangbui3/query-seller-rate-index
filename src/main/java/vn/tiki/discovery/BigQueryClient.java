@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.bigquery.*;
 import vn.tiki.discovery.utils.CommonUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -13,7 +14,8 @@ public class BigQueryClient {
 	private final String bqQueryTemplate;
 
     public BigQueryClient() throws IOException {
-        InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("tiki-search-platform.json");
+        InputStream fileInputStream = new FileInputStream("./gcp/bigquery/tiki-search-platform.json");
+
         GoogleCredentials credentials = GoogleCredentials.fromStream(fileInputStream);
         this.bqConnection = BigQueryOptions.newBuilder()
                 .setCredentials(credentials)
