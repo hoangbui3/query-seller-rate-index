@@ -1,7 +1,6 @@
 package vn.tiki.discovery;
 
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.admin.indices.alias.Alias;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -22,7 +21,10 @@ import org.elasticsearch.common.xcontent.XContentType;
 import vn.tiki.discovery.utils.CommonUtils;
 import vn.tiki.discovery.utils.SellerQueryPair;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 // TODO turn it into a proper singleton
@@ -58,13 +60,13 @@ public class ElasticSearchClient {
             boolean isCreated = createIndex(indexName);
             if (isCreated) {
                 System.out.println("Create Index " + indexName + " Success!");
-                 boolean isInsertSuccess = ESBulkInsert(indexName, rowsList);
-                 if(isInsertSuccess) {
-                     createAlias(indexName);
-                 }else{
-                     list.clear();
-                     list.add(indexName);
-                 }
+                boolean isInsertSuccess = ESBulkInsert(indexName, rowsList);
+                if (isInsertSuccess) {
+                    createAlias(indexName);
+                } else {
+                    list.clear();
+                    list.add(indexName);
+                }
                 removeOldIndex(list);
             }
             // endtime
