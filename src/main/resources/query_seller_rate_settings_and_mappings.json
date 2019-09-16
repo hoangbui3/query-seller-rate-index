@@ -12,6 +12,9 @@
         "seller_name": {
           "type": "text"
         },
+        "key_list": {
+            "type": "text"
+        },
         "queries": {
           "type": "nested",
           "properties": {
