@@ -62,7 +62,7 @@ mvn exec:java -Dexec.mainClass="BulkUpload" -Dexec.args="insert-es 20190819"
 
 ## After run
 Check data in http://uat-browser-esfive-1.svr.tiki.services:9200/query_seller_rate/_search/?pretty
-
+RIP
 
 
 
